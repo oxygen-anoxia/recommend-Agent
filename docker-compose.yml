@@ -1,0 +1,22 @@
+
+services:
+  reco-agent:
+    build:
+      context: .
+      args:
+        SERVER_PORT: ${SERVER_PORT:-25831}
+    ports:
+      - "${SERVER_PORT:-25831}:${SERVER_PORT:-25831}"
+    environment:
+      - PYTHONIOENCODING=utf-8
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://${SERVER_HOST:-localhost}:${SERVER_PORT:-25831}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
